@@ -20,7 +20,7 @@ Un script Python silencieux pour extraire automatiquement les questions des form
 
 1. **Cloner le projet :**
 ```bash
-git clone <repository-url>
+git clone git@github.com:ISSAM-SALMI/Microsoft-forms-AI.git
 cd Microsoft-forms-AI
 ```
 
