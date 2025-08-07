@@ -79,7 +79,6 @@ class MicrosoftFormsCompleteScraper:
                 except:
                     pass
                     
-                # Force kill if still running
                 try:
                     if hasattr(driver_ref, 'service') and hasattr(driver_ref.service, 'process'):
                         if driver_ref.service.process and driver_ref.service.process.poll() is None:
@@ -132,22 +131,18 @@ class MicrosoftFormsCompleteScraper:
         """Extract and download images from a question item"""
         downloaded_images = []
         try:
-            # Scroll to the question to ensure it's visible
             self.driver.execute_script("arguments[0].scrollIntoView(true);", question_item)
             time.sleep(1)
             
-            # Find all images in this question
             imgs = question_item.find_elements(By.XPATH, ".//img")
             
             for j, img in enumerate(imgs, 1):
                 try:
                     src = img.get_attribute("src")
                     if src and src.startswith("http"):
-                        # Generate unique filename
                         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
                         filename = f"question_{question_number}_image_{j}_{timestamp}.jpg"
                         
-                        # Download the image
                         filepath = self._download_image(src, filename)
                         if filepath:
                             downloaded_images.append({
@@ -175,15 +170,13 @@ class MicrosoftFormsCompleteScraper:
             return self.scraped_data
             
         try:
-            # Create necessary folders
             self._create_folders()
             
-            # Navigate to the form
             print(f"Navigation vers: {self.url}")
             self.driver.get(self.url)
             time.sleep(5)
 
-            # Find the question list
+            question_list = self.driver.find_element(By.ID, "question-list")
             question_list = self.driver.find_element(By.ID, "question-list")
             question_items = question_list.find_elements(
                 By.XPATH, ".//div[contains(@data-automation-id, 'questionItem')]"
@@ -192,18 +185,14 @@ class MicrosoftFormsCompleteScraper:
             self.scraped_data["statistics"]["total_questions"] = len(question_items)
             print(f"Nombre de questions trouvées: {len(question_items)}")
             
-            # Process each question
             for i, item in enumerate(question_items, 1):
                 print(f"Traitement de la question {i}/{len(question_items)}...")
                 
                 try:
-                    # Extract text content
                     question_text = self._extract_question_text(item)
                     
-                    # Extract images
                     images = self._extract_question_images(item, i)
                     
-                    # Create question data structure
                     question_data = {
                         "question_number": i,
                         "question_text": question_text,
@@ -214,7 +203,6 @@ class MicrosoftFormsCompleteScraper:
                         "scraped_at": datetime.now().isoformat()
                     }
                     
-                    # Update statistics
                     if question_text:
                         self.scraped_data["statistics"]["questions_with_text"] += 1
                     if images:
@@ -242,7 +230,6 @@ class MicrosoftFormsCompleteScraper:
     def save_to_json(self, filename=None):
         """Save scraped data to JSON file"""
         if filename is None:
-            # Create filename with timestamp
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             filename = f"microsoft_forms_complete_data_{timestamp}.json"
         
@@ -273,7 +260,7 @@ class MicrosoftFormsCompleteScraper:
         
         if stats['errors']:
             print("\nERREURS RENCONTRÉES:")
-            for error in stats['errors'][:5]:  # Show first 5 errors
+            for error in stats['errors'][:5]:
                 print(f"  - {error}")
             if len(stats['errors']) > 5:
                 print(f"  ... et {len(stats['errors']) - 5} autres erreurs")
@@ -286,16 +273,13 @@ if __name__ == "__main__":
     uc.Chrome.__del__ = lambda self: None
 
     try:
-        # Get URL from user
         url = input("Saisir l'URL du formulaire Microsoft Forms : ").strip()
         if not url.startswith("http"):
             raise ValueError("L'URL saisie est invalide.")
 
-        # Ask for headless mode
         headless_input = input("Mode headless (o/n) [défaut: n] : ").strip().lower()
         headless = headless_input in ['o', 'oui', 'y', 'yes']
 
-        # Create scraper instance
         scraper = MicrosoftFormsCompleteScraper(
             url=url,
             headless=headless,
@@ -306,10 +290,8 @@ if __name__ == "__main__":
         print("\nDémarrage du scraping...")
         data = scraper.run()
 
-        # Save results
         output_path = scraper.save_to_json()
 
-        # Print summary
         scraper.print_summary()
 
         if output_path:
