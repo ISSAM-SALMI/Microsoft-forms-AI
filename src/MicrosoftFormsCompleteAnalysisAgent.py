@@ -7,6 +7,7 @@ import requests
 from datetime import datetime
 import warnings
 import gc
+from AnswerMiningAgent import MicrosoftFormsScraper as AnswerAnalyzer
 
 
 class MicrosoftFormsCompleteScraper:
@@ -25,6 +26,7 @@ class MicrosoftFormsCompleteScraper:
                 "questions_with_text": 0,
                 "questions_with_images": 0,
                 "total_images_downloaded": 0,
+                "answer_types": {},
                 "errors": []
             }
         }
@@ -163,6 +165,36 @@ class MicrosoftFormsCompleteScraper:
             
         return downloaded_images
 
+    def _analyze_question_answer_type(self, question_item):
+        """Analyze question answer type and extract possible values"""
+        try:
+            analyzer = AnswerAnalyzer(self.url)
+            analyzer.driver = self.driver
+            
+            question_type = analyzer.questionType(question_item)
+            answer_values = None
+            
+            if question_type == "choiceItem":
+                answer_values = analyzer.choiceItem(question_item)
+            elif question_type == "npsContainer":
+                answer_values = analyzer.npsContainer(question_item)
+            elif question_type == "textInput":
+                answer_values = analyzer.textInput(question_item)
+            else:
+                answer_values = "Type de question non reconnu"
+            
+            return {
+                "answer_type": question_type,
+                "answer_values": answer_values
+            }
+        except Exception as e:
+            error_msg = f"Erreur analyse type réponse: {str(e)}"
+            self.scraped_data["statistics"]["errors"].append(error_msg)
+            return {
+                "answer_type": "unknown",
+                "answer_values": "Erreur d'analyse"
+            }
+
     def run(self):
         """Main scraping method that combines text and image extraction"""
         if not self._init_driver():
@@ -193,6 +225,8 @@ class MicrosoftFormsCompleteScraper:
                     
                     images = self._extract_question_images(item, i)
                     
+                    answer_analysis = self._analyze_question_answer_type(item)
+                    
                     question_data = {
                         "question_number": i,
                         "question_text": question_text,
@@ -200,6 +234,8 @@ class MicrosoftFormsCompleteScraper:
                         "has_images": len(images) > 0,
                         "images_count": len(images),
                         "images": images,
+                        "answer_type": answer_analysis["answer_type"],
+                        "answer_values": answer_analysis["answer_values"],
                         "scraped_at": datetime.now().isoformat()
                     }
                     
@@ -208,10 +244,18 @@ class MicrosoftFormsCompleteScraper:
                     if images:
                         self.scraped_data["statistics"]["questions_with_images"] += 1
                     
+                    answer_type = answer_analysis["answer_type"]
+                    if answer_type in self.scraped_data["statistics"]["answer_types"]:
+                        self.scraped_data["statistics"]["answer_types"][answer_type] += 1
+                    else:
+                        self.scraped_data["statistics"]["answer_types"][answer_type] = 1
+                    
                     self.scraped_data["questions"].append(question_data)
                     
                     print(f"  - Texte: {'✓' if question_text else '✗'}")
                     print(f"  - Images: {len(images)} téléchargée(s)")
+                    print(f"  - Type réponse: {answer_analysis['answer_type']}")
+                    print(f"  - Valeurs possibles: {answer_analysis['answer_values']}")
                     
                 except Exception as e:
                     error_msg = f"Erreur traitement question {i}: {str(e)}"
@@ -257,6 +301,11 @@ class MicrosoftFormsCompleteScraper:
         print(f"Questions avec images: {stats['questions_with_images']}")
         print(f"Images téléchargées: {stats['total_images_downloaded']}")
         print(f"Erreurs: {len(stats['errors'])}")
+        
+        if stats['answer_types']:
+            print("\nTYPES DE RÉPONSES:")
+            for answer_type, count in stats['answer_types'].items():
+                print(f"  - {answer_type}: {count} question(s)")
         
         if stats['errors']:
             print("\nERREURS RENCONTRÉES:")
