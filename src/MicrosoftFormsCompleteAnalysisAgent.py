@@ -332,8 +332,8 @@ if __name__ == "__main__":
         scraper = MicrosoftFormsCompleteScraper(
             url=url,
             headless=headless,
-            images_folder="images",
-            output_folder="output"
+            images_folder="data/output/images",
+            output_folder="data/output/jsons"
         )
 
         print("\nDémarrage du scraping...")
