@@ -1,0 +1,182 @@
+{
+  "url": "https://forms.office.com/Pages/ResponsePage.aspx?id=DQSIkWdsW0yxEjajBLZtrQAAAAAAAAAAAAN__4uyZYJUQkNTQlZaTkg3NVFVMUlTRjJFT0tBNDJTVS4u",
+  "scraping_date": "2025-08-09T16:46:34.223386",
+  "questions": [
+    {
+      "question_number": 1,
+      "question_text": "Question",
+      "has_text": true,
+      "has_images": true,
+      "images_count": 1,
+      "images": [
+        {
+          "image_number": 1,
+          "filename": "question_1_image_1_20250809_164642.jpg",
+          "filepath": "../data/output/images\\question_1_image_1_20250809_164642.jpg",
+          "original_src": "https://hive.forms.usercontent.microsoft/images/9188040d-6c67-4c5b-b112-36a304b66dad/00000000-0000-0000-0003-7fff8bb26582/TBCSBVZNH75QU1ISF2EOKA42SU/72dbc5f7-51f4-423e-b188-0ddfbffd2c50",
+          "ocr_extracted_text": "Die Shengsi-Inseln liegen im Ostchinesischen Meer Nicht einmal 20 der rund 400 Inseln sind bewohnt, und manche, auf denen einst Menschen lebten, wurden wieder verlassen. Ein altes Dorf auf der nun unbewohnten Insel Shengsan ist zu einer Sehenswürdigkeit geworden_ Die Einwohner haben das ehemalige Fischerdorf auf der viereinhalb Quadratkilometer Inse längst verlassen . Sie sind aus wirtschaftlichen Gründen auf das Festland gezogen. Dort ist es für sie leichter; Fischfang zu verarbeiten und zu verkaufen. Das Dorf aber; das sie zurückgelassen haben, ist in kürzester Zeit von der Natur zurückerobert worden Farne und Gräser überwuchern Häuser und Die Grenzen zwischen den von Menschenhand Unslni geschaffenen Gebäuden und dem $Lusyls umge benden Urwald verschwinden: JE Mauerwerk von wildem Wein clalle überwuchert; Grün s0 weit das Auge reicht. An diesem Ort lebt keine Menschenseele mehr. ckall lia  großen ihren Wege 25y",
+          "ocr_processed_at": "2025-08-09T17:18:26.858716",
+          "ocr_method": "easyocr"
+        }
+      ],
+      "answer_type": "choiceItem",
+      "answer_values": [
+        "a) Deutscher Forscher startet Expedition auf Vogelinsel in Südamerika",
+        "b) Die beliebtesten Reiseziele unter den europäischen Inseln",
+        "c) Fernreisen in eine unberührte Tierwelt",
+        "d) Geführte Bootsausflüge zu einsamen Badebuchten",
+        "e) Grüne Geisterinsel in Asien",
+        "f) Immer mehr Reiseunternehmen streichen Thailand aus ihrem Angebot",
+        "g)  Inseln zählen weltweit zu den wichtigsten Reisedestinationen",
+        "h) Nachhaltiger Tourismus auf chinesischen Inseln",
+        "i) Tierparadies auf einer Nordseeinsel",
+        "j) Umstrittener Umgang mit Tieren als Touristenmagnet"
+      ],
+      "scraped_at": "2025-08-09T16:46:43.301468"
+    },
+    {
+      "question_number": 2,
+      "question_text": "Question",
+      "has_text": true,
+      "has_images": true,
+      "images_count": 1,
+      "images": [
+        {
+          "image_number": 1,
+          "filename": "question_2_image_1_20250809_164644.jpg",
+          "filepath": "../data/output/images\\question_2_image_1_20250809_164644.jpg",
+          "original_src": "https://hive.forms.usercontent.microsoft/images/9188040d-6c67-4c5b-b112-36a304b66dad/00000000-0000-0000-0003-7fff8bb26582/TBCSBVZNH75QU1ISF2EOKA42SU/6f8c3de6-c4e5-4c7e-9937-23f6b8e580e9",
+          "ocr_extracted_text": "populär Llloyejl aa Der Reiseveranstalter TOURIMARS hat kürzlich eine Befragung durchgeführt. Er wollte wissen; welche Inseln in Europa unter Reisenden besonders sind Nach dieser Umfrage führt die griechische Insel Santorin die Liste an. Auf Platz zwei steht Madeira, die Insel im Atlantik. Mit Kreta und Zakynthos 2 schaffen es an dritter und vierter Stelle noch zwei weitere griechische Inseln in die Liste übrigens wird die Attraktivität griechischer Inseln auch in anderen Umfragen bestätigt. Platz fünf nimmt die Badeinsel Fuerteventura ein. Rang sechs kommt der britischen Kanalinsel Jersey zu. Mallorca folgt auf Platz sieben; gefolgt von der italienischen Insel Capri und der Kanareninsel Tenerifta Gerade noch in die Top Ten schaffte es auch die französische Mittelmeerinsel Korsika - die sowohl für Wanderer als auch für Badeurlauber interessant ist. Für dic Umfrage waren Erfahrungsberichte von Urlaubern über einen Zeitraum von 12 Monaten ausgewertet worden Sie bewerteten dabei die Hotels, Restaurants und Sehenswürdigkeiten der besuchten Insel. J popular grune [",
+          "ocr_processed_at": "2025-08-09T17:18:27.941353",
+          "ocr_method": "easyocr"
+        }
+      ],
+      "answer_type": "choiceItem",
+      "answer_values": [
+        "a) Deutscher Forscher startet Expedition auf Vogelinsel in Südamerika",
+        "b) Die beliebtesten Reiseziele unter den europäischen Inseln",
+        "c) Fernreisen in eine unberührte Tierwelt",
+        "d) Geführte Bootsausflüge zu einsamen Badebuchten",
+        "e) Grüne Geisterinsel in Asien",
+        "f) Immer mehr Reiseunternehmen streichen Thailand aus ihrem Angebot",
+        "g)  Inseln zählen weltweit zu den wichtigsten Reisedestinationen",
+        "h) Nachhaltiger Tourismus auf chinesischen Inseln",
+        "i) Tierparadies auf einer Nordseeinsel",
+        "j) Umstrittener Umgang mit Tieren als Touristenmagnet"
+      ],
+      "scraped_at": "2025-08-09T16:46:45.022537"
+    },
+    {
+      "question_number": 3,
+      "question_text": "Question",
+      "has_text": true,
+      "has_images": true,
+      "images_count": 1,
+      "images": [
+        {
+          "image_number": 1,
+          "filename": "question_3_image_1_20250809_164646.jpg",
+          "filepath": "../data/output/images\\question_3_image_1_20250809_164646.jpg",
+          "original_src": "https://hive.forms.usercontent.microsoft/images/9188040d-6c67-4c5b-b112-36a304b66dad/00000000-0000-0000-0003-7fff8bb26582/TBCSBVZNH75QU1ISF2EOKA42SU/aad22199-6322-444c-91be-20e9d23fd9dc",
+          "ocr_extracted_text": "Das ostfriesische Memmert ist für selten Vögel reserviert. Auf der Düneninsel; die vor ein paar 3 Jahrhunderten aus der Nordsee autgetaucht ist, leben 'Zigtausende von Vögeln Nur der Inselvogt lebt zeitweise dort. Von Anfang März bis Ende Oktober ist der Forscher das einzige menschliche Wesen auf der kleinen Vogelschutzinsel im Wattenmeer: Im Auftrag des Landes Niedersachsen ist der Inselvogt zuständig für den Schutz von Natur und Vögeln Memmert. Von Mai bis Ende ist Brutzeit auf der Insel. 100.000 Tiere, Vertreter von 60 verschiedenen Vogelarten, kommen Jahr für Jahr zum Brüten nach Memmert Während dieser Zeit besteht ein absolutes Betretungsverbot ausgenommen für Personen, die in Seenot geraten sind eine schriftliche Genehmigung haben Ab August, dem Ende der Brutzeit, haben auch Urlauber für kurze Zeit die Chance auf einen Besuch, aber ausschließlich im Rahmen einer geführten Expedition. Nur mit einem Experten dürfen sie die Düneninsel im Wattenmeer erkunden: ZyafeJ ,l 49 19099 UobsaJl ,lazub - U9>Jl Ulc Glho Jbaz Ulio ~oyl lie Uxs auf Juli oder Cui 12p",
+          "ocr_processed_at": "2025-08-09T17:18:29.018816",
+          "ocr_method": "easyocr"
+        }
+      ],
+      "answer_type": "choiceItem",
+      "answer_values": [
+        "a) Deutscher Forscher startet Expedition auf Vogelinsel in Südamerika",
+        "b) Die beliebtesten Reiseziele unter den europäischen Inseln",
+        "c) Fernreisen in eine unberührte Tierwelt",
+        "d) Geführte Bootsausflüge zu einsamen Badebuchten",
+        "e) Grüne Geisterinsel in Asien",
+        "f) Immer mehr Reiseunternehmen streichen Thailand aus ihrem Angebot",
+        "g)  Inseln zählen weltweit zu den wichtigsten Reisedestinationen",
+        "h) Nachhaltiger Tourismus auf chinesischen Inseln",
+        "i) Tierparadies auf einer Nordseeinsel",
+        "j) Umstrittener Umgang mit Tieren als Touristenmagnet"
+      ],
+      "scraped_at": "2025-08-09T16:46:46.656510"
+    },
+    {
+      "question_number": 4,
+      "question_text": "Question",
+      "has_text": true,
+      "has_images": true,
+      "images_count": 1,
+      "images": [
+        {
+          "image_number": 1,
+          "filename": "question_4_image_1_20250809_164647.jpg",
+          "filepath": "../data/output/images\\question_4_image_1_20250809_164647.jpg",
+          "original_src": "https://hive.forms.usercontent.microsoft/images/9188040d-6c67-4c5b-b112-36a304b66dad/00000000-0000-0000-0003-7fff8bb26582/TBCSBVZNH75QU1ISF2EOKA42SU/e44ff5b8-2c05-40aa-b432-048762a34f7a",
+          "ocr_extracted_text": "29i 44 [1al ,aji , ujy Die südamerikanischen Galapagosinseln locken nicht mit weißen Sandstränden und Palmen. Dennoch sind sie das Ziel so mancher Reisesehnsüchte. Für viele Menschen gelten die fernen Inseln als eine Art Paradies Und tatsächlich kommt man nirgendwo sonst ungezähmten Tieren so nahe wir auf diesen Inseln: Auf den unbewohnten Galapagosinseln verhalten sich die Tiere so als ob keine Menschen gäbe. Für die Besucher genauso faszinierend wie für die Entdeckungsreisenden früherer Jahrhunderte ist dabei die Zutraulichkeit, die sich die Tiere durch das Fehlen von natürlichen Feinden auf den Inseln bewahrt haben. Man kann das ganze Jahr über zu den Galapagosinseln reisen. Die bewohnten Inseln kann man dabei ganz gut allein besuchen. Anders sieht es bei den unbewohnten Inseln aus. Hier lassen die Behörden seit einigen Jahren nur eine begrenzte Zahl an Schiffen zu, und ohne Führer ist das Betreten nicht erlaubt. Die Inseln und ihre Tiere bleiben sich selbst überlassen, damit das Naturparadies auch weiterhin erhalten bleibt. ajl  Cli u wohl",
+          "ocr_processed_at": "2025-08-09T17:18:30.013465",
+          "ocr_method": "easyocr"
+        }
+      ],
+      "answer_type": "choiceItem",
+      "answer_values": [
+        "a) Deutscher Forscher startet Expedition auf Vogelinsel in Südamerika",
+        "b) Die beliebtesten Reiseziele unter den europäischen Inseln",
+        "c) Fernreisen in eine unberührte Tierwelt",
+        "d) Geführte Bootsausflüge zu einsamen Badebuchten",
+        "e) Grüne Geisterinsel in Asien",
+        "f) Immer mehr Reiseunternehmen streichen Thailand aus ihrem Angebot",
+        "g)  Inseln zählen weltweit zu den wichtigsten Reisedestinationen",
+        "h) Nachhaltiger Tourismus auf chinesischen Inseln",
+        "i) Tierparadies auf einer Nordseeinsel",
+        "j) Umstrittener Umgang mit Tieren als Touristenmagnet"
+      ],
+      "scraped_at": "2025-08-09T16:46:48.394313"
+    },
+    {
+      "question_number": 5,
+      "question_text": "Question",
+      "has_text": true,
+      "has_images": true,
+      "images_count": 1,
+      "images": [
+        {
+          "image_number": 1,
+          "filename": "question_5_image_1_20250809_164649.jpg",
+          "filepath": "../data/output/images\\question_5_image_1_20250809_164649.jpg",
+          "original_src": "https://hive.forms.usercontent.microsoft/images/9188040d-6c67-4c5b-b112-36a304b66dad/00000000-0000-0000-0003-7fff8bb26582/TBCSBVZNH75QU1ISF2EOKA42SU/10f38623-df6d-42ac-91d6-26a9489c4a30",
+          "ocr_extracted_text": "Dass Elefanten in Thailand teurer sein können als ein 3er-BMW in München, an 5 ihrem enormen wirtschaftlichen Potenzial: Sie sind eine der Hauptattraktionen der thailändischen Tourismusindustrie: Jeder dritte Besucher des Landes möchte mit Elefanten in Kontakt kommen oder hat das bereits hinter sich; zeigt die Umfrage einer Tierschutzgruppe Die Organisation schätzt, dass in dem Land mehr als 2000 Elefanten im Einsatz sind, um die Nachfrage der Urlauber zu bedienen so viele wie in keinem anderen Land der Welt. Was für die Besitzer ein Geschäft ist, steht immer häufiger bei Tierschützern in der Kritik: Elefantenreiten sei die grausamste Tierattraktion der Welt. Sie sprechen von von einer lebenslangen Qua für die Elefanten Mehr als 100 Reiseveranstalter haben solche Angebote schon aus den Katalogen gestrichen. Dies feiern Tierschützer als Elefanten sind Wildtiere; keine Entertainer . Dass die Lebensbedingungen der Tourismuselefanten nicht artgerecht sind, ist bekannt. Doch selbst wenn sie nicht mehr als Einnahmequelle dienen, wird das an ihren Lebenumständen wenig ändern. liegt gutes Sieg:",
+          "ocr_processed_at": "2025-08-09T17:18:30.900922",
+          "ocr_method": "easyocr"
+        }
+      ],
+      "answer_type": "choiceItem",
+      "answer_values": [
+        "a) Deutscher Forscher startet Expedition auf Vogelinsel in Südamerika",
+        "b) Die beliebtesten Reiseziele unter den europäischen Inseln",
+        "c) Fernreisen in eine unberührte Tierwelt",
+        "d) Geführte Bootsausflüge zu einsamen Badebuchten",
+        "e) Grüne Geisterinsel in Asien",
+        "f) Immer mehr Reiseunternehmen streichen Thailand aus ihrem Angebot",
+        "g)  Inseln zählen weltweit zu den wichtigsten Reisedestinationen",
+        "h) Nachhaltiger Tourismus auf chinesischen Inseln",
+        "i) Tierparadies auf einer Nordseeinsel",
+        "j) Umstrittener Umgang mit Tieren als Touristenmagnet"
+      ],
+      "scraped_at": "2025-08-09T16:46:50.098973"
+    }
+  ],
+  "statistics": {
+    "total_questions": 5,
+    "questions_with_text": 5,
+    "questions_with_images": 5,
+    "total_images_downloaded": 5,
+    "answer_types": {
+      "choiceItem": 5
+    },
+    "errors": []
+  },
+  "ocr_processing_info": {
+    "processed_at": "2025-08-09T17:18:30.900932",
+    "total_images_processed": 5,
+    "ocr_method": "easyocr",
+    "agent_version": "2.0"
+  }
+}

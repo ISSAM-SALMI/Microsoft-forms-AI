@@ -29,6 +29,27 @@ class OllamaAgent:
 
 if __name__ == "__main__":
     agent = OllamaAgent()
-    prompt = "1 + x = 10, alors x = ?"
+    prompt = (
+        "Die Shengsi-Inseln liegen im Ostchinesischen Meer. Nicht einmal 20 der rund 400 Inseln sind bewohnt, "
+        "und manche, auf denen einst Menschen lebten, wurden wieder verlassen. Ein altes Dorf auf der nun unbewohnten Insel Shengsan "
+        "ist zu einer Sehenswürdigkeit geworden. Die Einwohner haben das ehemalige Fischerdorf auf der viereinhalb Quadratkilometer "
+        "Insel längst verlassen. Sie sind aus wirtschaftlichen Gründen auf das Festland gezogen. Dort ist es für sie leichter, "
+        "Fischfang zu verarbeiten und zu verkaufen. Das Dorf aber, das sie zurückgelassen haben, ist in kürzester Zeit von der Natur "
+        "zurückerobert worden. Farne und Gräser überwuchern Häuser, und die Grenzen zwischen den von Menschenhand geschaffenen Gebäuden "
+        "und dem umliegenden Urwald verschwinden. Das Mauerwerk ist von wildem Wein überwuchert; Grün soweit das Auge reicht. "
+        "An diesem Ort lebt keine Menschenseele mehr.\n"
+        "a) Deutscher Forscher startet Expedition auf Vogelinsel in Südamerika\n"
+        "b) Die beliebtesten Reiseziele unter den europäischen Inseln\n"
+        "c) Fernreisen in eine unberührte Tierwelt\n"
+        "d) Geführte Bootsausflüge zu einsamen Badebuchten\n"
+        "e) Grüne Geisterinsel in Asien\n"
+        "f) Immer mehr Reiseunternehmen streichen Thailand aus ihrem Angebot\n"
+        "g) Inseln zählen weltweit zu den wichtigsten Reisedestinationen\n"
+        "h) Nachhaltiger Tourismus auf chinesischen Inseln\n"
+        "i) Tierparadies auf einer Nordseeinsel\n"
+        "j) Umstrittener Umgang mit Tieren als Touristenmagnet\n"
+        "Gib mir nur die richtige Antwort."
+    )
     answer = agent.ask(prompt)
     print("Réponse Ollama :", answer)
+

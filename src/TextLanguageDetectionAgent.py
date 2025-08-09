@@ -10,7 +10,7 @@ class LanguageDetector:
         return lang_name
 
 if __name__ == "__main__":
-    text = "猿も木から落ちる — Even monkeys fall from trees."
+    text = "Die Shengsi-Inseln liegen im Ostchinesischen Meer. Nicht einmal 2"
     detector = LanguageDetector()
     lang = detector.detect_language(text)
     print(lang)

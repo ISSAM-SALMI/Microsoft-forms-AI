@@ -69,7 +69,7 @@ class FormsOCRProcessor:
                 extracted_text = ' '.join([result[1] for result in results])
             elif OCR_ENGINE == "pytesseract":
                 image = Image.open(image_path)
-                extracted_text = pytesseract.image_to_string(image, lang='eng+fra+deu')
+                extracted_text = pytesseract.image_to_string(image, lang='eng+fra+deu')   
             else:
                 return "Moteur OCR non configuré"
             
