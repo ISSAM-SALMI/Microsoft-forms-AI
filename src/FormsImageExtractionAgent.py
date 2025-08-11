@@ -121,7 +121,7 @@ class FormsImageExtractionAgent:
                 
                 extracted_text = self.extract_text_with_easyocr(absolute_path)
                 
-                image_info['ocr_extracted_text'] = extracted_text
+                image_info['question_text'] = extracted_text
                 image_info['ocr_processed_at'] = datetime.now().isoformat()
                 image_info['ocr_method'] = 'easyocr'
                 

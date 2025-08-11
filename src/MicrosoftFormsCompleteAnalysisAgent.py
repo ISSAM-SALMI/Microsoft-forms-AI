@@ -10,8 +10,9 @@ import gc
 from AnswerMiningAgent import MicrosoftFormsScraper as AnswerAnalyzer
 
 
+
 class MicrosoftFormsCompleteScraper:
-    def __init__(self, url, headless=False, images_folder="images", output_folder="output"):
+    def __init__(self, url, headless=True, images_folder="images", output_folder="output"):
         self.url = url
         self.headless = headless
         self.images_folder = images_folder
@@ -20,6 +21,7 @@ class MicrosoftFormsCompleteScraper:
         self.scraped_data = {
             "url": url,
             "scraping_date": datetime.now().isoformat(),
+            "contains_images": False,
             "questions": [],
             "statistics": {
                 "total_questions": 0,
@@ -209,7 +211,6 @@ class MicrosoftFormsCompleteScraper:
             time.sleep(5)
 
             question_list = self.driver.find_element(By.ID, "question-list")
-            question_list = self.driver.find_element(By.ID, "question-list")
             question_items = question_list.find_elements(
                 By.XPATH, ".//div[contains(@data-automation-id, 'questionItem')]"
             )
@@ -269,6 +270,15 @@ class MicrosoftFormsCompleteScraper:
         finally:
             self._close_driver_safely()
         
+        # Set top-level flag indicating if the form contains any images
+        try:
+            self.scraped_data["contains_images"] = (
+                self.scraped_data["statistics"]["questions_with_images"] > 0 or
+                self.scraped_data["statistics"]["total_images_downloaded"] > 0
+            )
+        except Exception:
+            self.scraped_data["contains_images"] = False
+        
         return self.scraped_data
 
     def save_to_json(self, filename=None):
@@ -322,12 +332,13 @@ if __name__ == "__main__":
     uc.Chrome.__del__ = lambda self: None
 
     try:
-        url = input("Saisir l'URL du formulaire Microsoft Forms : ").strip()
+        # Utiliser l'URL par défaut définie en haut du fichier.
+        url = "https://forms.office.com/Pages/ResponsePage.aspx?id=DQSIkWdsW0yxEjajBLZtrQAAAAAAAAAAAAN__4uyZYJUQkNTQlZaTkg3NVFVMUlTRjJFT0tBNDJTVS4u"
         if not url.startswith("http"):
-            raise ValueError("L'URL saisie est invalide.")
+            raise ValueError("L'URL configurée est invalide.")
 
-        headless_input = input("Mode headless (o/n) [défaut: n] : ").strip().lower()
-        headless = headless_input in ['o', 'oui', 'y', 'yes']
+        # Mode headless activé automatiquement
+        headless = True
 
         scraper = MicrosoftFormsCompleteScraper(
             url=url,
@@ -335,7 +346,6 @@ if __name__ == "__main__":
             images_folder="../data/output/images",
             output_folder="../data/output/jsons"
         )
-
         print("\nDémarrage du scraping...")
         data = scraper.run()
 
