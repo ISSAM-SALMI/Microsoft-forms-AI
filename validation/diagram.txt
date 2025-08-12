@@ -1,0 +1,16 @@
+flowchart LR
+    A[Read Data from excel] --> B[links]
+    B --> C[scraping forms]
+    C --> D1[Text Questions]
+    C --> D2[Image Questions]
+    C --> D3[Mix Questions]
+    
+    D1 --> E[VALIDATION OF JSONS]
+    D2 --> E
+    D3 --> E
+
+    E -->|Image Question - YES| F[OCR TEXT EXTRACTING]
+    E -->|Image Question - NO| G[Make prompt]
+    
+    F --> G
+    G --> H[Store answers to Jsons]
