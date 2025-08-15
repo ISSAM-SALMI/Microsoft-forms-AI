@@ -7,7 +7,16 @@ import requests
 from datetime import datetime
 import warnings
 import gc
-from AnswerMiningAgent import MicrosoftFormsScraper as AnswerAnalyzer
+from .AnswerMiningAgent import MicrosoftFormsScraper as AnswerAnalyzer
+from .logging_utils import log
+
+# Patch Chrome destructor early to avoid WinError 6 on GC (Windows handle invalid)
+try:  # pragma: no cover
+    if hasattr(uc, 'Chrome') and hasattr(uc.Chrome, '__del__'):
+        uc.Chrome.__del__ = lambda self: None  # neutralize library __del__
+        log('SCRAPE', 'Patch destructor Chrome (__del__) appliqué', level='DEBUG')
+except Exception:
+    pass
 
 
 
@@ -202,11 +211,11 @@ class MicrosoftFormsCompleteScraper:
         if not self._init_driver():
             self.scraped_data["error"] = "Impossible d'initialiser le driver Chrome"
             return self.scraped_data
-            
+        # Hard reference for explicit shutdown control
+        driver_local = self.driver
         try:
             self._create_folders()
-            
-            print(f"Navigation vers: {self.url}")
+            log('SCRAPE', f"Navigation: {self.url}")
             self.driver.get(self.url)
             time.sleep(5)
 
@@ -216,10 +225,10 @@ class MicrosoftFormsCompleteScraper:
             )
             
             self.scraped_data["statistics"]["total_questions"] = len(question_items)
-            print(f"Nombre de questions trouvées: {len(question_items)}")
+            log('SCRAPE', f"Questions trouvées: {len(question_items)}")
             
             for i, item in enumerate(question_items, 1):
-                print(f"Traitement de la question {i}/{len(question_items)}...")
+                log('SCRAPE', f"Question {i}/{len(question_items)}", indent=1)
                 
                 try:
                     question_text = self._extract_question_text(item)
@@ -253,22 +262,30 @@ class MicrosoftFormsCompleteScraper:
                     
                     self.scraped_data["questions"].append(question_data)
                     
-                    print(f"  - Texte: {'✓' if question_text else '✗'}")
-                    print(f"  - Images: {len(images)} téléchargée(s)")
-                    print(f"  - Type réponse: {answer_analysis['answer_type']}")
-                    print(f"  - Valeurs possibles: {answer_analysis['answer_values']}")
+                    log('SCRAPE', f"Texte: {'✓' if question_text else '✗'}", indent=2)
+                    log('SCRAPE', f"Images: {len(images)}", indent=2)
+                    log('SCRAPE', f"Type: {answer_analysis['answer_type']}", indent=2)
+                    log('SCRAPE', f"Valeurs: {str(answer_analysis['answer_values'])[:120]}", indent=2)
                     
                 except Exception as e:
                     error_msg = f"Erreur traitement question {i}: {str(e)}"
                     self.scraped_data["statistics"]["errors"].append(error_msg)
-                    print(f"  - Erreur: {error_msg}")
+                    log('SCRAPE', f"Erreur: {error_msg}", level='ERROR', indent=2)
 
         except Exception as e:
             self.scraped_data["error"] = str(e)
-            print(f"Erreur générale: {str(e)}")
+            log('SCRAPE', f"Erreur générale: {e}", level='ERROR')
 
         finally:
-            self._close_driver_safely()
+            try:
+                if driver_local:
+                    # Explicit quit to avoid late GC destructor call
+                    try:
+                        driver_local.quit()
+                    except Exception:
+                        pass
+            finally:
+                self._close_driver_safely()
         
         # Set top-level flag indicating if the form contains any images
         try:
@@ -294,42 +311,33 @@ class MicrosoftFormsCompleteScraper:
                 json.dump(self.scraped_data, f, indent=2, ensure_ascii=False)
             return filepath
         except Exception as e:
-            print(f"Erreur sauvegarde JSON: {str(e)}")
+            log('SCRAPE', f"Erreur sauvegarde JSON: {e}", level='ERROR')
             return None
 
     def print_summary(self):
         """Print a summary of the scraping results"""
         stats = self.scraped_data["statistics"]
-        print("\n" + "="*60)
-        print("RÉSUMÉ DU SCRAPING".center(60))
-        print("="*60)
-        print(f"URL du formulaire: {self.url}")
-        print(f"Date de scraping: {self.scraped_data['scraping_date']}")
-        print("-"*60)
-        print(f"Questions totales: {stats['total_questions']}")
-        print(f"Questions avec texte: {stats['questions_with_text']}")
-        print(f"Questions avec images: {stats['questions_with_images']}")
-        print(f"Images téléchargées: {stats['total_images_downloaded']}")
-        print(f"Erreurs: {len(stats['errors'])}")
-        
+        log('SCRAPE', f"URL: {self.url}")
+        log('SCRAPE', f"Date: {self.scraped_data['scraping_date']}")
+        log('SCRAPE', f"Totales: {stats['total_questions']}")
+        log('SCRAPE', f"Avec texte: {stats['questions_with_text']}")
+        log('SCRAPE', f"Avec images: {stats['questions_with_images']}")
+        log('SCRAPE', f"Images téléchargées: {stats['total_images_downloaded']}")
+        log('SCRAPE', f"Erreurs: {len(stats['errors'])}")
         if stats['answer_types']:
-            print("\nTYPES DE RÉPONSES:")
             for answer_type, count in stats['answer_types'].items():
-                print(f"  - {answer_type}: {count} question(s)")
-        
+                log('SCRAPE', f"Type {answer_type}: {count}", indent=1)
         if stats['errors']:
-            print("\nERREURS RENCONTRÉES:")
             for error in stats['errors'][:5]:
-                print(f"  - {error}")
+                log('SCRAPE', f"Err: {error}", level='ERROR', indent=1)
             if len(stats['errors']) > 5:
-                print(f"  ... et {len(stats['errors']) - 5} autres erreurs")
-        print("="*60)
+                log('SCRAPE', f"... {len(stats['errors']) - 5} erreurs supplémentaires", level='WARN', indent=1)
 
 
 if __name__ == "__main__":
     import warnings
     warnings.filterwarnings("ignore")
-    uc.Chrome.__del__ = lambda self: None
+    uc.Chrome.__del__ = lambda self: None  # éviter exceptions dans le GC
 
     try:
         # Utiliser l'URL par défaut définie en haut du fichier.
@@ -346,20 +354,17 @@ if __name__ == "__main__":
             images_folder="../data/output/images",
             output_folder="../data/output/jsons"
         )
-        print("\nDémarrage du scraping...")
+        log('SCRAPE', 'Démarrage test individuel')
         data = scraper.run()
-
         output_path = scraper.save_to_json()
-
         scraper.print_summary()
-
         if output_path:
-            print(f"\nDonnées sauvegardées dans: {output_path}")
-            print(f"Images sauvegardées dans: {scraper.images_folder}/")
+            log('SCRAPE', f"JSON: {output_path}")
+            log('SCRAPE', f"Images dossier: {scraper.images_folder}")
         else:
-            print("\nÉchec de la sauvegarde JSON.")
+            log('SCRAPE', "Échec sauvegarde JSON", level='ERROR')
 
     except KeyboardInterrupt:
-        print("\nScraping interrompu par l'utilisateur.")
+        log('SCRAPE', "Interruption utilisateur", level='WARN')
     except Exception as e:
-        print(f"\nUne erreur s'est produite: {str(e)}")
+        log('SCRAPE', f"Erreur exécution: {e}", level='ERROR')

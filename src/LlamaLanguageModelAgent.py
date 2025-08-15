@@ -1,6 +1,9 @@
 import subprocess
 import shutil
 from typing import Optional
+import locale
+
+PREFERRED_ENCODING = 'utf-8'
 
 class OllamaAgent:
     """Wrapper around local Ollama CLI with robustness (timeout, availability check)."""
@@ -20,16 +23,21 @@ class OllamaAgent:
         return text.strip()
 
     def ask(self, prompt: str, timeout: int = 30) -> str:
-        """Query the model; returns answer or fallback token on failure."""
+        """Query the model; returns answer or fallback token on failure.
+        Uses enforced UTF-8 decoding with replacement to avoid cp1252 decode errors on Windows.
+        """
         if not self.available:
             return self._fallback_answer(prompt, reason="NO_OLLAMA")
         try:
+            # Force UTF-8 decoding; errors='replace' to avoid UnicodeDecodeError in _readerthread
             proc = subprocess.Popen(
                 ['ollama', 'run', self.model],
                 stdin=subprocess.PIPE,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
-                text=True
+                text=True,
+                encoding=PREFERRED_ENCODING,
+                errors='replace'
             )
             try:
                 stdout, stderr = proc.communicate(input=prompt + '\n', timeout=timeout)
@@ -37,7 +45,7 @@ class OllamaAgent:
                 proc.kill()
                 return self._fallback_answer(prompt, reason="TIMEOUT")
             if stderr:
-                # Non-fatal: still attempt to parse output
+                # Still log truncated stderr for diagnostics
                 print(f"[LLM][STDERR] {stderr.strip()[:200]}")
             answer = self.extract_final_answer(stdout)
             if not answer.strip():

@@ -17,14 +17,15 @@ from pathlib import Path
 from typing import List, Dict, Any
 
 from langchain_core.runnables import RunnableLambda, RunnableSequence
+from .logging_utils import log, log_section
 
-from ExcelLinksExtractorAgent import get_links_list
-from MicrosoftFormsCompleteAnalysisAgent import MicrosoftFormsCompleteScraper
-from JsonImageDetectorAgent import JsonImageChecker
-from FormsImageExtractionAgent import FormsImageExtractionAgent, OCR_AVAILABLE
-from JsonQuestionExtractorAgent import JsonQuestionExtractor
-from TextLanguageDetectionAgent import LanguageDetector
-from LlamaLanguageModelAgent import OllamaAgent
+from .ExcelLinksExtractorAgent import get_links_list
+from .MicrosoftFormsCompleteAnalysisAgent import MicrosoftFormsCompleteScraper
+from .JsonImageDetectorAgent import JsonImageChecker
+from .FormsImageExtractionAgent import FormsImageExtractionAgent, OCR_AVAILABLE
+from .JsonQuestionExtractorAgent import JsonQuestionExtractor
+from .TextLanguageDetectionAgent import LanguageDetector
+from .LlamaLanguageModelAgent import OllamaAgent
 
 INPUT_EXCEL_DIR = Path(r"C:\Users\abdel\OneDrive\Bureau\Microsoft-forms-AI\data\input")
 OUTPUT_BASE_DIR = Path(r"C:\Users\abdel\OneDrive\Bureau\Microsoft-forms-AI\data\output")
@@ -38,10 +39,12 @@ IMAGES_DIR.mkdir(parents=True, exist_ok=True)
 # Set to False if you want to keep intermediates for debugging
 CLEANUP_OCR_JSON = True
 CLEANUP_IMAGES = True
+MAX_LLM_TIMEOUT_RETRIES = 4  # nombre max de réessais si TIMEOUT
 
 
 def step_extract_links(_: Dict[str, Any]) -> Dict[str, Any]:
     links = get_links_list(str(INPUT_EXCEL_DIR))
+    log('PIPELINE', f"Liens trouvés: {len(links)}")
     return {"links": links}
 
 
@@ -49,6 +52,7 @@ def step_scrape_forms(state: Dict[str, Any]) -> Dict[str, Any]:
     scraped_files: List[Path] = []
     for link in state.get("links", []):
         try:
+            log('SCRAPE', f"Scraping: {link}")
             scraper = MicrosoftFormsCompleteScraper(
                 url=link,
                 headless=True,
@@ -59,8 +63,9 @@ def step_scrape_forms(state: Dict[str, Any]) -> Dict[str, Any]:
             saved = scraper.save_to_json()
             if saved:
                 scraped_files.append(Path(saved))
+                log('SCRAPE', f"JSON sauvegardé: {saved}")
         except Exception as e:
-            print(f"[SCRAPE][ERREUR] {link}: {e}")
+            log('SCRAPE', f"Erreur: {e}", level='ERROR')
     state["scraped_json_files"] = scraped_files
     return state
 
@@ -75,8 +80,9 @@ def step_validate_and_flag(state: Dict[str, Any]) -> Dict[str, Any]:
                 "path": json_path,
                 "contains_images": has_images
             })
+            log('VALIDATE', f"{json_path.name} images={has_images}")
         except Exception as e:
-            print(f"[VALIDATE][ERREUR] {json_path.name}: {e}")
+            log('VALIDATE', f"Erreur {json_path.name}: {e}", level='ERROR')
     state["validated_jsons"] = validated
     return state
 
@@ -85,7 +91,7 @@ def step_ocr_if_needed(state: Dict[str, Any]) -> Dict[str, Any]:
     enriched_paths: List[Path] = []
     ocr_intermediate: List[Path] = []
     if not OCR_AVAILABLE:
-        print("[OCR] EasyOCR indisponible - étape ignorée")
+        log('OCR', "EasyOCR indisponible - étape ignorée", level='WARN')
         state["enriched_json_files"] = [v["path"] for v in state.get("validated_jsons", [])]
         return state
     agent = FormsImageExtractionAgent(str(JSON_DIR))
@@ -98,9 +104,10 @@ def step_ocr_if_needed(state: Dict[str, Any]) -> Dict[str, Any]:
                     if new_path:
                         enriched_paths.append(new_path)
                         ocr_intermediate.append(new_path)
+                        log('OCR', f"OCR OK: {new_path.name}")
                         continue
             except Exception as e:
-                print(f"[OCR][ERREUR] {meta['path'].name}: {e}")
+                log('OCR', f"Erreur {meta['path'].name}: {e}", level='ERROR')
         # If no OCR or failed, keep original
         enriched_paths.append(meta["path"])
     state["enriched_json_files"] = enriched_paths
@@ -139,7 +146,7 @@ def step_generate_answers(state: Dict[str, Any]) -> Dict[str, Any]:
                 data = json.load(f)
             modified = False
             questions = data.get("questions", [])
-            print(f"[LLM] Traitement fichier {path.name} - {len(questions)} question(s)")
+            log('LLM', f"Fichier {path.name} - {len(questions)} question(s)")
             for idx, q in enumerate(questions, 1):
                 if "llm_answer" in q:
                     continue  # already answered
@@ -157,12 +164,23 @@ def step_generate_answers(state: Dict[str, Any]) -> Dict[str, Any]:
                     language = "Unknown"
                 prompt = build_prompt(language, qtype, q_text, answer_values)
                 try:
-                    print(f"  [LLM][Q{idx}] Type={qtype} Lang={language} ... en cours")
-                    answer = llm.ask(prompt, timeout=35)
-                    print(f"  [LLM][Q{idx}] Réponse reçue: {answer[:60]}...")
+                    log('LLM', f"Q{idx} type={qtype} lang={language} - génération", indent=1)
+                    attempt = 0
+                    answer = ""
+                    while True:
+                        attempt += 1
+                        answer = llm.ask(prompt, timeout=35)
+                        if answer == "FALLBACK_TIMEOUT_AUTO_ANSWER" and attempt <= MAX_LLM_TIMEOUT_RETRIES:
+                            log('LLM', f"Q{idx} timeout fallback -> retry {attempt}/{MAX_LLM_TIMEOUT_RETRIES}", level='WARN', indent=2)
+                            continue
+                        break
+                    if answer == "FALLBACK_TIMEOUT_AUTO_ANSWER" and attempt > MAX_LLM_TIMEOUT_RETRIES:
+                        log('LLM', f"Q{idx} abandon après {MAX_LLM_TIMEOUT_RETRIES} timeouts", level='ERROR', indent=2)
+                    else:
+                        log('LLM', f"Q{idx} réponse (try {attempt}): {answer[:60]}...", indent=2)
                 except Exception as e:
                     answer = f"LLM_ERROR: {e}"
-                    print(f"  [LLM][Q{idx}] Erreur: {e}")
+                    log('LLM', f"Q{idx} exception: {e}", level='ERROR', indent=2)
                 q["llm_answer"] = answer
                 q["llm_language_detected"] = language
                 modified = True
@@ -170,7 +188,7 @@ def step_generate_answers(state: Dict[str, Any]) -> Dict[str, Any]:
                 out_path = path.parent / f"{path.stem}_with_answers.json"
                 with open(out_path, 'w', encoding='utf-8') as f:
                     json.dump(data, f, indent=2, ensure_ascii=False)
-                print(f"[LLM] Fichier enrichi sauvegardé: {out_path.name}")
+                log('LLM', f"Sauvegardé: {out_path.name}")
                 augmented.append(out_path)
                 # Optional cleanup of images referenced in this JSON
                 if CLEANUP_IMAGES:
@@ -194,11 +212,11 @@ def step_generate_answers(state: Dict[str, Any]) -> Dict[str, Any]:
                                 pass
                     removed_images_total += imgs_deleted
                     if imgs_deleted:
-                        print(f"[CLEANUP] {imgs_deleted} image(s) supprimée(s) pour {out_path.name}")
+                        log('CLEANUP', f"{imgs_deleted} image(s) supprimée(s) pour {out_path.name}")
             else:
                 augmented.append(path)
         except Exception as e:
-            print(f"[LLM][ERREUR] {path.name}: {e}")
+            log('LLM', f"Erreur fichier {path.name}: {e}", level='ERROR')
     state["final_json_files"] = augmented
 
     # Cleanup OCR intermediate JSON files (keep only original + final answers)
@@ -210,12 +228,12 @@ def step_generate_answers(state: Dict[str, Any]) -> Dict[str, Any]:
             try:
                 if ocr_path.exists():
                     ocr_path.unlink()
-                    print(f"[CLEANUP] OCR intermédiaire supprimé: {ocr_path.name}")
+                    log('CLEANUP', f"OCR intermédiaire supprimé: {ocr_path.name}")
             except Exception as e:
-                print(f"[CLEANUP][ERREUR] {ocr_path.name}: {e}")
+                log('CLEANUP', f"Erreur suppression {ocr_path.name}: {e}", level='ERROR')
 
     if CLEANUP_IMAGES and removed_images_total:
-        print(f"[CLEANUP] Total images supprimées: {removed_images_total}")
+        log('CLEANUP', f"Total images supprimées: {removed_images_total}")
     return state
 
 
@@ -227,12 +245,11 @@ def run_pipeline() -> Dict[str, Any]:
         | RunnableLambda(step_ocr_if_needed)
         | RunnableLambda(step_generate_answers)
     )
+    log_section('PIPELINE TERMINÉ')
     result = pipeline.invoke({})
-    print("\nPIPELINE TERMINÉ")
-    print("Liens traités:", result.get("links"))
-    print("JSON finaux:")
+    log('PIPELINE', f"Liens: {len(result.get('links', []))}")
     for p in result.get("final_json_files", []):
-        print("  -", p)
+        log('PIPELINE', f"Final: {p}")
     return result
 
 

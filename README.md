@@ -14,10 +14,13 @@ Suite complète pour :
 - Détection questions avec images (`JsonImageDetectorAgent`)
 - OCR multi‑langues (EasyOCR) sur images (`FormsImageExtractionAgent`)
 - Détection de langue (`TextLanguageDetectionAgent`)
-- Génération de réponses LLM (Ollama + modèle `qwen3:8b`) via prompts structurés
+- Génération de réponses LLM (Ollama, modèle par défaut configurable, ex. `qwen3:8b` ou `deepseek-r1:8b`)
+- Mécanisme de retry sur TIMEOUT LLM (jusqu'à 4 tentatives avant fallback)
+- Fallback automatique quand Ollama absent / timeout / sortie vide (`FALLBACK_*_AUTO_ANSWER`)
 - Pipeline orchestrée LangChain (`LangChainPipelineAgent`)
-- Enrichissement incrémental des JSON : `_with_ocr_*`, puis `_with_answers` 
-- Gestion des erreurs et logs étape par étape
+- Nettoyage automatique des intermédiaires: suppression des JSON `_with_ocr_*` et des images après création du JSON final avec réponses
+- Logging unifié coloré (module `logging_utils`) + niveaux configurables
+- Enrichissement JSON final avec `llm_answer`, `llm_language_detected`
 
 ## 🧠 Flux (Pipeline)
 
@@ -37,19 +40,28 @@ flowchart LR
     G --> H[Save Answers JSON]
 ```
 
-## 📁 Structure actuelle (src/)
+## 📁 Structure principale
 
 ```
+main.py                              # Point d'entrée simple (run pipeline)
+LangChainPipelineAgent.py            # Wrapper racine important la version src/
 src/
-  AnswerMiningAgent.py               # Détection type / options question (support interne)
-  ExcelLinksExtractorAgent.py        # Extraction liens MS Forms depuis Excel
-  FormsImageExtractionAgent.py       # OCR sur images et enrichissement JSON
-  JsonImageDetectorAgent.py          # Booléen presence images
-  JsonQuestionExtractorAgent.py      # Extraction questions / types / valeurs
-  LlamaLanguageModelAgent.py         # Interface Ollama avec fallback
-  MicrosoftFormsCompleteAnalysisAgent.py # Scraping principal (questions + images)
+  __init__.py                        # Package marker
+  logging_utils.py                   # Logger unifié (log, log_section)
+  AnswerMiningAgent.py               # Typage & extraction options
+  ExcelLinksExtractorAgent.py        # Extraction liens Excel
+  FormsImageExtractionAgent.py       # OCR enrichisseur JSON
+  JsonImageDetectorAgent.py          # Détection images (bool)
+  JsonQuestionExtractorAgent.py      # Normalisation questions
+  LlamaLanguageModelAgent.py         # Interface Ollama (timeout + fallback)
+  MicrosoftFormsCompleteAnalysisAgent.py # Scraping complet formulaire
   TextLanguageDetectionAgent.py      # Détection de langue
-  LangChainPipelineAgent.py          # Orchestration globale
+  LangChainPipelineAgent.py          # Orchestration (steps + cleanup + retries)
+data/
+  input/                             # Fichiers Excel
+  output/
+    jsons/                           # JSON brut & finaux
+    images/                          # Images (supprimées après final si cleanup actif)
 ```
 
 ## 📋 Prérequis
@@ -73,15 +85,29 @@ ollama pull qwen3:8b  # si utilisation LLM
 
 ## ▶️ Lancer la pipeline complète
 
+Méthodes équivalentes (choisissez) :
+
 ```powershell
-python .\src\LangChainPipelineAgent.py
+# 1. Point d'entrée principal
+python .\main.py
+
+# 2. Module package
+python -m src.LangChainPipelineAgent
+
+# 3. Wrapper racine
+python .\LangChainPipelineAgent.py
 ```
 
 Résultat :
 - JSON brut: `data/output/jsons/microsoft_forms_complete_data_*.json`
-- Après OCR: `*_with_ocr_*.json`
-- Après réponses LLM: `*_with_answers.json`
-- Images: `data/output/images/`
+- JSON final: `*_with_answers.json`
+- (Les JSON intermédiaires `_with_ocr_*` et les images sont supprimés si cleanup actif)
+
+Pour désactiver le nettoyage (garder images et JSON OCR) : modifier dans `src/LangChainPipelineAgent.py`:
+```python
+CLEANUP_OCR_JSON = False
+CLEANUP_IMAGES = False
+```
 
 ## 🔍 Exécution d'agents individuels
 
@@ -118,24 +144,30 @@ Résultat :
 
 Options utilisées : `--headless=new`, `--no-sandbox`, `--disable-dev-shm-usage`, `--disable-gpu`, `--disable-web-security`.
 
-## 🧪 Robustesse / Fallback
+## 🧪 Robustesse / Fallback / Retry
 
-- LLM : si Ollama absent -> réponse `FALLBACK_*`
-- OCR : si EasyOCR non installé -> étape ignorée
-- Timeouts LLM configurés (30–35s)
+- LLM absent / erreur / timeout / sortie vide → `FALLBACK_<RAISON>_AUTO_ANSWER`
+- TIMEOUT: jusqu'à 4 retries automatiques avant abandon
+- OCR absent (EasyOCR non installé) → étape ignorée proprement
+- Fermeture Chrome sécurisée (destructeur neutralisé) pour éviter `WinError 6`
+- Décodage UTF‑8 forcé avec remplacement pour éviter erreurs d'encodage Windows
 
 ## ❗ Limitations actuelles
 
-- Une seule feuille Excel (premier fichier détecté)
-- Pas de parallélisation LLM
-- Pas de reprise incrémentale fine si interruption
+- Première feuille / premier fichier Excel seulement
+- Pas encore de parallélisation LLM ni pooling
+- Pas de CLI pour activer/désactiver dynamiquement OCR / cleanup / retries
+- Pas de cache réponses LLM
 
 ## 🔮 Prochaines améliorations possibles
 
-- Paramètres CLI (limiter liens, désactiver OCR, etc.)
-- Cache des réponses LLM
-- Export CSV agrégé
-- Support multi-modèles Ollama
+- Paramètres CLI (limiter liens, désactiver OCR, changer modèle, retries dynamiques)
+- Cache des réponses LLM / persistance
+- Export CSV agrégé (questions + réponses)
+- Support multi-modèles & fallback hiérarchique
+- Parallélisation / batching LLM
+- Mode verbose/debug via variable env
+- Option conservation images pour audit
 
 ## 🤝 Contribution
 
@@ -148,9 +180,19 @@ Options utilisées : `--headless=new`, `--no-sandbox`, `--disable-dev-shm-usage`
 
 Utiliser uniquement sur des formulaires que vous êtes autorisé à analyser. Respecter les CGU Microsoft.
 
+## 🧾 Logging
+
+Logger unifié (`logging_utils.log`) avec niveaux: DEBUG / INFO / WARN / ERROR
+
+Variables d'environnement :
+```powershell
+$Env:FORMS_AI_LOG_LEVEL = "INFO"   # ou DEBUG
+$Env:FORMS_AI_LOG_COLOR = "1"      # 0 pour désactiver couleurs
+```
+
 ## 📞 Support
 
-Ouvrir une issue GitHub ou vérifier le dossier `data/output/` (JSON + logs implicites).
+Ouvrir une issue GitHub ou vérifier `data/output/jsons` et la console (logs structurés).
 
 ---
-Made with modular agents + LangChain pipeline.
+Made with modular agents + LangChain pipeline + unified logging.
