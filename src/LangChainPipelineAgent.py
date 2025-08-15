@@ -126,13 +126,59 @@ Question type: {qtype}
 Question: {text}
 Options: {opts}
 
-Rules:
-- If type is choiceItem or npsContainer: reply with EXACT option text only.
-- If type is textInput: reply with a concise, relevant answer in {language}.
-- Never translate question or options.
-- No explanations.
+TASK:
+Provide the best possible answer AND a concise justification.
 
-Answer:"""
+OUTPUT FORMAT (MANDATORY JSON):
+{{"answer":"<ANSWER_ONLY>","justification":"<SHORT_REASONING>"}}
+
+RULES:
+- If type is choiceItem or npsContainer: answer MUST be EXACT option text ONLY (no extra chars).
+- If type is textInput: answer is a concise relevant response in {language}.
+- justification: max 30 words, refer only to information present in question/OCR/context; no hallucination; same language as question.
+- Never translate options or fabricate data.
+- Do NOT wrap JSON in markdown fences.
+- Do NOT add extra keys.
+
+Return ONLY the JSON object.
+"""
+
+
+def parse_answer_and_justification(raw: str) -> Dict[str, str]:
+    """Parse model output expecting a JSON with 'answer' and 'justification'.
+    Fallback: if parsing fails, treat whole text as answer and set generic justification.
+    """
+    result = {"answer": raw.strip(), "justification": ""}
+    if not raw:
+        return result
+    # Try direct JSON
+    try:
+        data = json.loads(raw)
+        if isinstance(data, dict) and 'answer' in data and 'justification' in data:
+            return {"answer": str(data['answer']).strip(), "justification": str(data['justification']).strip()}
+    except Exception:
+        pass
+    # Try to extract JSON substring
+    try:
+        start = raw.find('{')
+        end = raw.rfind('}')
+        if 0 <= start < end:
+            snippet = raw[start:end+1]
+            data = json.loads(snippet)
+            if isinstance(data, dict) and 'answer' in data:
+                result['answer'] = str(data['answer']).strip()
+                result['justification'] = str(data.get('justification', '')).strip()
+                return result
+    except Exception:
+        pass
+    # Fallback heuristic: split first sentence
+    if '.' in raw:
+        first, *rest = raw.split('.')
+        result['answer'] = first.strip()
+        result['justification'] = '.'.join(rest).strip()[:160]
+    else:
+        result['justification'] = 'No structured justification returned.'
+    return result
 
 
 def step_generate_answers(state: Dict[str, Any]) -> Dict[str, Any]:
@@ -166,22 +212,24 @@ def step_generate_answers(state: Dict[str, Any]) -> Dict[str, Any]:
                 try:
                     log('LLM', f"Q{idx} type={qtype} lang={language} - génération", indent=1)
                     attempt = 0
-                    answer = ""
+                    raw_answer = ""
                     while True:
                         attempt += 1
-                        answer = llm.ask(prompt, timeout=35)
-                        if answer == "FALLBACK_TIMEOUT_AUTO_ANSWER" and attempt <= MAX_LLM_TIMEOUT_RETRIES:
+                        raw_answer = llm.ask(prompt, timeout=35)
+                        if raw_answer == "FALLBACK_TIMEOUT_AUTO_ANSWER" and attempt <= MAX_LLM_TIMEOUT_RETRIES:
                             log('LLM', f"Q{idx} timeout fallback -> retry {attempt}/{MAX_LLM_TIMEOUT_RETRIES}", level='WARN', indent=2)
                             continue
                         break
-                    if answer == "FALLBACK_TIMEOUT_AUTO_ANSWER" and attempt > MAX_LLM_TIMEOUT_RETRIES:
+                    if raw_answer == "FALLBACK_TIMEOUT_AUTO_ANSWER" and attempt > MAX_LLM_TIMEOUT_RETRIES:
                         log('LLM', f"Q{idx} abandon après {MAX_LLM_TIMEOUT_RETRIES} timeouts", level='ERROR', indent=2)
-                    else:
-                        log('LLM', f"Q{idx} réponse (try {attempt}): {answer[:60]}...", indent=2)
+                    parsed = parse_answer_and_justification(raw_answer)
+                    log('LLM', f"Q{idx} answer: {parsed['answer'][:40]} | justif: {parsed['justification'][:40]}", indent=2)
                 except Exception as e:
-                    answer = f"LLM_ERROR: {e}"
+                    raw_answer = f"LLM_ERROR: {e}"
+                    parsed = {"answer": raw_answer, "justification": "Generation failed."}
                     log('LLM', f"Q{idx} exception: {e}", level='ERROR', indent=2)
-                q["llm_answer"] = answer
+                q["llm_answer"] = parsed["answer"]
+                q["llm_justification"] = parsed.get("justification", "")
                 q["llm_language_detected"] = language
                 modified = True
             if modified:
