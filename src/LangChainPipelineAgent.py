@@ -34,6 +34,11 @@ IMAGES_DIR = OUTPUT_BASE_DIR / "images"
 JSON_DIR.mkdir(parents=True, exist_ok=True)
 IMAGES_DIR.mkdir(parents=True, exist_ok=True)
 
+# Cleanup configuration: keep only the raw scraped JSON + final JSON with answers
+# Set to False if you want to keep intermediates for debugging
+CLEANUP_OCR_JSON = True
+CLEANUP_IMAGES = True
+
 
 def step_extract_links(_: Dict[str, Any]) -> Dict[str, Any]:
     links = get_links_list(str(INPUT_EXCEL_DIR))
@@ -78,6 +83,7 @@ def step_validate_and_flag(state: Dict[str, Any]) -> Dict[str, Any]:
 
 def step_ocr_if_needed(state: Dict[str, Any]) -> Dict[str, Any]:
     enriched_paths: List[Path] = []
+    ocr_intermediate: List[Path] = []
     if not OCR_AVAILABLE:
         print("[OCR] EasyOCR indisponible - étape ignorée")
         state["enriched_json_files"] = [v["path"] for v in state.get("validated_jsons", [])]
@@ -91,12 +97,14 @@ def step_ocr_if_needed(state: Dict[str, Any]) -> Dict[str, Any]:
                     new_path = agent.save_processed_json(processed, meta["path"])
                     if new_path:
                         enriched_paths.append(new_path)
+                        ocr_intermediate.append(new_path)
                         continue
             except Exception as e:
                 print(f"[OCR][ERREUR] {meta['path'].name}: {e}")
         # If no OCR or failed, keep original
         enriched_paths.append(meta["path"])
     state["enriched_json_files"] = enriched_paths
+    state["ocr_intermediate_files"] = ocr_intermediate
     return state
 
 
@@ -124,6 +132,7 @@ def step_generate_answers(state: Dict[str, Any]) -> Dict[str, Any]:
     llm = OllamaAgent()
     lang_detector = LanguageDetector()
     augmented: List[Path] = []
+    removed_images_total = 0
     for path in state.get("enriched_json_files", []):
         try:
             with open(path, 'r', encoding='utf-8') as f:
@@ -163,11 +172,50 @@ def step_generate_answers(state: Dict[str, Any]) -> Dict[str, Any]:
                     json.dump(data, f, indent=2, ensure_ascii=False)
                 print(f"[LLM] Fichier enrichi sauvegardé: {out_path.name}")
                 augmented.append(out_path)
+                # Optional cleanup of images referenced in this JSON
+                if CLEANUP_IMAGES:
+                    imgs_deleted = 0
+                    for q in data.get("questions", []):
+                        for img in q.get("images", []) or []:
+                            fp = img.get("filepath") if isinstance(img, dict) else None
+                            if not fp:
+                                continue
+                            try:
+                                img_path = Path(fp)
+                                if not img_path.is_absolute():
+                                    # Try relative to project root
+                                    candidate = Path.cwd() / fp
+                                    if candidate.exists():
+                                        img_path = candidate
+                                if img_path.exists() and img_path.is_file():
+                                    img_path.unlink()
+                                    imgs_deleted += 1
+                            except Exception:
+                                pass
+                    removed_images_total += imgs_deleted
+                    if imgs_deleted:
+                        print(f"[CLEANUP] {imgs_deleted} image(s) supprimée(s) pour {out_path.name}")
             else:
                 augmented.append(path)
         except Exception as e:
             print(f"[LLM][ERREUR] {path.name}: {e}")
     state["final_json_files"] = augmented
+
+    # Cleanup OCR intermediate JSON files (keep only original + final answers)
+    if CLEANUP_OCR_JSON:
+        for ocr_path in state.get("ocr_intermediate_files", []):
+            # Don't remove if it's also a final JSON (unlikely naming overlap, but safety)
+            if any(str(ocr_path) == str(final_p) for final_p in augmented):
+                continue
+            try:
+                if ocr_path.exists():
+                    ocr_path.unlink()
+                    print(f"[CLEANUP] OCR intermédiaire supprimé: {ocr_path.name}")
+            except Exception as e:
+                print(f"[CLEANUP][ERREUR] {ocr_path.name}: {e}")
+
+    if CLEANUP_IMAGES and removed_images_total:
+        print(f"[CLEANUP] Total images supprimées: {removed_images_total}")
     return state
 
 

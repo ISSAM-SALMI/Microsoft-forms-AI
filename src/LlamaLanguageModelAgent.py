@@ -4,7 +4,7 @@ from typing import Optional
 
 class OllamaAgent:
     """Wrapper around local Ollama CLI with robustness (timeout, availability check)."""
-    def __init__(self, model: str = 'qwen3:8b', offline_fallback: bool = True):
+    def __init__(self, model: str = 'deepseek-r1:8b', offline_fallback: bool = True):
         self.model = model
         self.offline_fallback = offline_fallback
         self.available = shutil.which('ollama') is not None
