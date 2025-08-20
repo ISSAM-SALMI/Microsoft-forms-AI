@@ -29,19 +29,19 @@ Suite complète pour :
 ```mermaid
 flowchart LR
   A[Excel: Form Name + Link] --> B[Extract Name & Links]
-  B --> C[Scrape Forms (store form_name in JSON)]
+  B --> C[Scrape Forms]
   C --> D1[Text Questions]
   C --> D2[Image Questions]
-  C --> D3[Mixed]
+  C --> D3[Mixed Questions]
   D1 --> E[Validate JSON]
   D2 --> E
   D3 --> E
-  E -->|Images OUI| F[OCR]
-  E -->|Images NON| G[LLM Prompt]
+  E -->|Images YES| F[OCR]
+  E -->|Images NO| G[LLM Prompt]
   F --> G
   G --> H[Save Answers JSON]
-  H --> I[Index in Elasticsearch (form_name)]
-  I --> J[Search by form_name]
+  H --> I[Index in Elasticsearch]
+  I --> J[Search by Form Name]
 ```
 
 ## 📁 Structure principale
