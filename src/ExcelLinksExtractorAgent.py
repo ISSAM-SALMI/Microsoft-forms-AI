@@ -2,8 +2,8 @@ import pandas as pd
 from pathlib import Path
 from typing import List, Optional
 
-def get_links_list(data_path: Optional[str] = None) -> List[str]:
-    """Return list of links from second column of first Excel file found."""
+def get_links_list(data_path: Optional[str] = None) -> List[tuple]:
+    """Return list of (form_name, link) from first Excel file found (col 0: name, col 1: link)."""
     if data_path is None:
         data_path = Path(r"..\data\input")
     else:
@@ -20,8 +20,14 @@ def get_links_list(data_path: Optional[str] = None) -> List[str]:
         if df.shape[1] < 2:
             print("Le fichier ne contient pas au moins deux colonnes.")
             return []
-        links = [str(v).strip() for v in df.iloc[:, 1].dropna().tolist() if str(v).strip().startswith('http')]
-        return links
+        # Assumer col 0 = nom, col 1 = lien
+        pairs = []
+        for i, row in df.iterrows():
+            name = str(row.iloc[0]).strip()
+            link = str(row.iloc[1]).strip()
+            if link.startswith('http') and name:
+                pairs.append((name, link))
+        return pairs
     except Exception as e:
         print(f"Erreur lors de la lecture du fichier Excel: {e}")
         return []

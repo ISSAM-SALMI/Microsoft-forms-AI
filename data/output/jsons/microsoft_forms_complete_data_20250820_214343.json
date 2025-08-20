@@ -1,0 +1,97 @@
+{
+  "url": "https://forms.office.com/Pages/ResponsePage.aspx?id=DQSIkWdsW0yxEjajBLZtrQAAAAAAAAAAAANAAS6xmZ1UM09SSzNWSTdSMjFQUUMzWkFZU0U2VDZLSi4u",
+  "form_name": "issam",
+  "scraping_date": "2025-08-20T21:42:46.522377",
+  "contains_images": false,
+  "questions": [
+    {
+      "question_number": 1,
+      "question_text": "Quelle est la couleur du ciel par temps clair ?",
+      "has_text": true,
+      "has_images": false,
+      "images_count": 0,
+      "images": [],
+      "answer_type": "choiceItem",
+      "answer_values": [
+        "Bleu",
+        "Vert",
+        "Rouge"
+      ],
+      "scraped_at": "2025-08-20T21:43:19.960928"
+    },
+    {
+      "question_number": 2,
+      "question_text": "Comment s'appelle la capitale de la France ?",
+      "has_text": true,
+      "has_images": false,
+      "images_count": 0,
+      "images": [],
+      "answer_type": "textInput",
+      "answer_values": "Input text",
+      "scraped_at": "2025-08-20T21:43:21.309755"
+    },
+    {
+      "question_number": 3,
+      "question_text": "Combien y a-t-il de jours dans une semaine ?",
+      "has_text": true,
+      "has_images": false,
+      "images_count": 0,
+      "images": [],
+      "answer_type": "choiceItem",
+      "answer_values": [
+        "5",
+        "7",
+        "10"
+      ],
+      "scraped_at": "2025-08-20T21:43:22.632656"
+    },
+    {
+      "question_number": 4,
+      "question_text": "Donnez le prénom de la personne qui est le président de la France (2025).",
+      "has_text": true,
+      "has_images": false,
+      "images_count": 0,
+      "images": [],
+      "answer_type": "textInput",
+      "answer_values": "Input text",
+      "scraped_at": "2025-08-20T21:43:23.922899"
+    },
+    {
+      "question_number": 5,
+      "question_text": "Lequel de ces animaux est un mammifère ?",
+      "has_text": true,
+      "has_images": false,
+      "images_count": 0,
+      "images": [],
+      "answer_type": "choiceItem",
+      "answer_values": [
+        "Poisson",
+        "Chien",
+        "Oiseau"
+      ],
+      "scraped_at": "2025-08-20T21:43:25.335321"
+    },
+    {
+      "question_number": 6,
+      "question_text": "Écrivez un mot qui désigne une saison.",
+      "has_text": true,
+      "has_images": false,
+      "images_count": 0,
+      "images": [],
+      "answer_type": "textInput",
+      "answer_values": "Input text",
+      "scraped_at": "2025-08-20T21:43:26.461534"
+    }
+  ],
+  "statistics": {
+    "total_questions": 6,
+    "questions_with_text": 6,
+    "questions_with_images": 0,
+    "total_images_downloaded": 0,
+    "answer_types": {
+      "choiceItem": 3,
+      "textInput": 3
+    },
+    "errors": []
+  }
+}

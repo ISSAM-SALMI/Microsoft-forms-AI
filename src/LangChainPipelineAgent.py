@@ -26,6 +26,7 @@ from .FormsImageExtractionAgent import FormsImageExtractionAgent, OCR_AVAILABLE
 from .JsonQuestionExtractorAgent import JsonQuestionExtractor
 from .TextLanguageDetectionAgent import LanguageDetector
 from .LlamaLanguageModelAgent import OllamaAgent
+from .ElasticsearchUploaderAgent import ElasticsearchUploaderAgent
 
 INPUT_EXCEL_DIR = Path(r"C:\Users\abdel\OneDrive\Bureau\Microsoft-forms-AI\data\input")
 OUTPUT_BASE_DIR = Path(r"C:\Users\abdel\OneDrive\Bureau\Microsoft-forms-AI\data\output")
@@ -43,18 +44,19 @@ MAX_LLM_TIMEOUT_RETRIES = 4  # nombre max de réessais si TIMEOUT
 
 
 def step_extract_links(_: Dict[str, Any]) -> Dict[str, Any]:
-    links = get_links_list(str(INPUT_EXCEL_DIR))
-    log('PIPELINE', f"Liens trouvés: {len(links)}")
-    return {"links": links}
+    pairs = get_links_list(str(INPUT_EXCEL_DIR))  # [(form_name, link)]
+    log('PIPELINE', f"Liens trouvés: {len(pairs)}")
+    return {"form_links": pairs}
 
 
 def step_scrape_forms(state: Dict[str, Any]) -> Dict[str, Any]:
     scraped_files: List[Path] = []
-    for link in state.get("links", []):
+    for form_name, link in state.get("form_links", []):
         try:
-            log('SCRAPE', f"Scraping: {link}")
+            log('SCRAPE', f"Scraping: {form_name} | {link}")
             scraper = MicrosoftFormsCompleteScraper(
                 url=link,
+                form_name=form_name,
                 headless=True,
                 images_folder=str(IMAGES_DIR),
                 output_folder=str(JSON_DIR)
@@ -215,7 +217,7 @@ def step_generate_answers(state: Dict[str, Any]) -> Dict[str, Any]:
                     raw_answer = ""
                     while True:
                         attempt += 1
-                        raw_answer = llm.ask(prompt, timeout=35)
+                        raw_answer = llm.ask(prompt, timeout=120)
                         if raw_answer == "FALLBACK_TIMEOUT_AUTO_ANSWER" and attempt <= MAX_LLM_TIMEOUT_RETRIES:
                             log('LLM', f"Q{idx} timeout fallback -> retry {attempt}/{MAX_LLM_TIMEOUT_RETRIES}", level='WARN', indent=2)
                             continue
@@ -285,6 +287,24 @@ def step_generate_answers(state: Dict[str, Any]) -> Dict[str, Any]:
     return state
 
 
+def step_upload_to_elasticsearch(state: Dict[str, Any]) -> Dict[str, Any]:
+    uploader = ElasticsearchUploaderAgent()
+    for json_path in state.get("final_json_files", []):
+        try:
+            with open(json_path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            form_name = data.get("form_name") or data.get("form_title") or json_path.stem
+            questions = data.get("questions", [])
+            meta = {k: v for k, v in data.items() if k not in ["questions"]}
+            success = uploader.upload_form(form_name, questions, meta)
+            if success:
+                log("ELASTIC", f"Upload OK: {form_name}")
+            else:
+                log("ELASTIC", f"Upload SKIP: {form_name}", level="WARN")
+        except Exception as e:
+            log("ELASTIC", f"Erreur upload {json_path.name}: {e}", level="ERROR")
+    return state
+
 def run_pipeline() -> Dict[str, Any]:
     pipeline = RunnableSequence(
         RunnableLambda(step_extract_links)
@@ -292,6 +312,7 @@ def run_pipeline() -> Dict[str, Any]:
         | RunnableLambda(step_validate_and_flag)
         | RunnableLambda(step_ocr_if_needed)
         | RunnableLambda(step_generate_answers)
+        | RunnableLambda(step_upload_to_elasticsearch)
     )
     log_section('PIPELINE TERMINÉ')
     result = pipeline.invoke({})

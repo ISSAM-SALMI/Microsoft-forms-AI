@@ -21,14 +21,16 @@ except Exception:
 
 
 class MicrosoftFormsCompleteScraper:
-    def __init__(self, url, headless=True, images_folder="images", output_folder="output"):
+    def __init__(self, url, form_name=None, headless=True, images_folder="images", output_folder="output"):
         self.url = url
+        self.form_name = form_name
         self.headless = headless
         self.images_folder = images_folder
         self.output_folder = output_folder
         self.driver = None
         self.scraped_data = {
             "url": url,
+            "form_name": form_name,
             "scraping_date": datetime.now().isoformat(),
             "contains_images": False,
             "questions": [],
