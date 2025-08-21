@@ -1,7 +1,7 @@
 {
   "url": "https://forms.office.com/Pages/ResponsePage.aspx?id=DQSIkWdsW0yxEjajBLZtrQAAAAAAAAAAAAN__4uyZYJUQkNTQlZaTkg3NVFVMUlTRjJFT0tBNDJTVS4u",
   "form_name": "Media censorship and online hostility",
-  "scraping_date": "2025-08-20T21:41:55.126625",
+  "scraping_date": "2025-08-20T22:25:36.049332",
   "contains_images": true,
   "questions": [
     {
@@ -13,8 +13,8 @@
       "images": [
         {
           "image_number": 1,
-          "filename": "question_1_image_1_20250820_214220.jpg",
-          "filepath": "C:\\Users\\abdel\\OneDrive\\Bureau\\Microsoft-forms-AI\\data\\output\\images\\question_1_image_1_20250820_214220.jpg",
+          "filename": "question_1_image_1_20250820_222556.jpg",
+          "filepath": "C:\\Users\\abdel\\OneDrive\\Bureau\\Microsoft-forms-AI\\data\\output\\images\\question_1_image_1_20250820_222556.jpg",
           "original_src": "https://hive.forms.usercontent.microsoft/images/9188040d-6c67-4c5b-b112-36a304b66dad/00000000-0000-0000-0003-7fff8bb26582/TBCSBVZNH75QU1ISF2EOKA42SU/72dbc5f7-51f4-423e-b188-0ddfbffd2c50"
         }
       ],
@@ -31,7 +31,7 @@
         "i) Tierparadies auf einer Nordseeinsel",
         "j) Umstrittener Umgang mit Tieren als Touristenmagnet"
       ],
-      "scraped_at": "2025-08-20T21:42:21.140829"
+      "scraped_at": "2025-08-20T22:25:58.075418"
     },
     {
       "question_number": 2,
@@ -42,8 +42,8 @@
       "images": [
         {
           "image_number": 1,
-          "filename": "question_2_image_1_20250820_214222.jpg",
-          "filepath": "C:\\Users\\abdel\\OneDrive\\Bureau\\Microsoft-forms-AI\\data\\output\\images\\question_2_image_1_20250820_214222.jpg",
+          "filename": "question_2_image_1_20250820_222559.jpg",
+          "filepath": "C:\\Users\\abdel\\OneDrive\\Bureau\\Microsoft-forms-AI\\data\\output\\images\\question_2_image_1_20250820_222559.jpg",
           "original_src": "https://hive.forms.usercontent.microsoft/images/9188040d-6c67-4c5b-b112-36a304b66dad/00000000-0000-0000-0003-7fff8bb26582/TBCSBVZNH75QU1ISF2EOKA42SU/6f8c3de6-c4e5-4c7e-9937-23f6b8e580e9"
         }
       ],
@@ -60,7 +60,7 @@
         "i) Tierparadies auf einer Nordseeinsel",
         "j) Umstrittener Umgang mit Tieren als Touristenmagnet"
       ],
-      "scraped_at": "2025-08-20T21:42:23.126258"
+      "scraped_at": "2025-08-20T22:26:03.766753"
     },
     {
       "question_number": 3,
@@ -71,8 +71,8 @@
       "images": [
         {
           "image_number": 1,
-          "filename": "question_3_image_1_20250820_214224.jpg",
-          "filepath": "C:\\Users\\abdel\\OneDrive\\Bureau\\Microsoft-forms-AI\\data\\output\\images\\question_3_image_1_20250820_214224.jpg",
+          "filename": "question_3_image_1_20250820_222604.jpg",
+          "filepath": "C:\\Users\\abdel\\OneDrive\\Bureau\\Microsoft-forms-AI\\data\\output\\images\\question_3_image_1_20250820_222604.jpg",
           "original_src": "https://hive.forms.usercontent.microsoft/images/9188040d-6c67-4c5b-b112-36a304b66dad/00000000-0000-0000-0003-7fff8bb26582/TBCSBVZNH75QU1ISF2EOKA42SU/aad22199-6322-444c-91be-20e9d23fd9dc"
         }
       ],
@@ -89,22 +89,15 @@
         "i) Tierparadies auf einer Nordseeinsel",
         "j) Umstrittener Umgang mit Tieren als Touristenmagnet"
       ],
-      "scraped_at": "2025-08-20T21:42:25.056860"
+      "scraped_at": "2025-08-20T22:26:07.897771"
     },
     {
       "question_number": 4,
       "question_text": "Question",
       "has_text": true,
-      "has_images": true,
-      "images_count": 1,
-      "images": [
-        {
-          "image_number": 1,
-          "filename": "question_4_image_1_20250820_214226.jpg",
-          "filepath": "C:\\Users\\abdel\\OneDrive\\Bureau\\Microsoft-forms-AI\\data\\output\\images\\question_4_image_1_20250820_214226.jpg",
-          "original_src": "https://hive.forms.usercontent.microsoft/images/9188040d-6c67-4c5b-b112-36a304b66dad/00000000-0000-0000-0003-7fff8bb26582/TBCSBVZNH75QU1ISF2EOKA42SU/e44ff5b8-2c05-40aa-b432-048762a34f7a"
-        }
-      ],
+      "has_images": false,
+      "images_count": 0,
+      "images": [],
       "answer_type": "choiceItem",
       "answer_values": [
         "a) Deutscher Forscher startet Expedition auf Vogelinsel in Südamerika",
@@ -118,7 +111,7 @@
         "i) Tierparadies auf einer Nordseeinsel",
         "j) Umstrittener Umgang mit Tieren als Touristenmagnet"
       ],
-      "scraped_at": "2025-08-20T21:42:27.252150"
+      "scraped_at": "2025-08-20T22:26:22.091574"
     },
     {
       "question_number": 5,
@@ -129,8 +122,8 @@
       "images": [
         {
           "image_number": 1,
-          "filename": "question_5_image_1_20250820_214228.jpg",
-          "filepath": "C:\\Users\\abdel\\OneDrive\\Bureau\\Microsoft-forms-AI\\data\\output\\images\\question_5_image_1_20250820_214228.jpg",
+          "filename": "question_5_image_1_20250820_222623.jpg",
+          "filepath": "C:\\Users\\abdel\\OneDrive\\Bureau\\Microsoft-forms-AI\\data\\output\\images\\question_5_image_1_20250820_222623.jpg",
           "original_src": "https://hive.forms.usercontent.microsoft/images/9188040d-6c67-4c5b-b112-36a304b66dad/00000000-0000-0000-0003-7fff8bb26582/TBCSBVZNH75QU1ISF2EOKA42SU/10f38623-df6d-42ac-91d6-26a9489c4a30"
         }
       ],
@@ -147,17 +140,19 @@
         "i) Tierparadies auf einer Nordseeinsel",
         "j) Umstrittener Umgang mit Tieren als Touristenmagnet"
       ],
-      "scraped_at": "2025-08-20T21:42:29.070836"
+      "scraped_at": "2025-08-20T22:26:28.935601"
     }
   ],
   "statistics": {
     "total_questions": 5,
     "questions_with_text": 5,
-    "questions_with_images": 5,
-    "total_images_downloaded": 5,
+    "questions_with_images": 4,
+    "total_images_downloaded": 4,
     "answer_types": {
       "choiceItem": 5
     },
-    "errors": []
+    "errors": [
+      "Erreur téléchargement image question_4_image_1_20250820_222608.jpg: HTTPSConnectionPool(host='hive.forms.usercontent.microsoft', port=443): Read timed out. (read timeout=10)"
+    ]
   }
 }

@@ -1,7 +1,7 @@
 {
   "url": "https://forms.office.com/Pages/ResponsePage.aspx?id=DQSIkWdsW0yxEjajBLZtrQAAAAAAAAAAAANAAS6xmZ1UM09SSzNWSTdSMjFQUUMzWkFZU0U2VDZLSi4u",
   "form_name": "issam",
-  "scraping_date": "2025-08-20T21:42:46.522377",
+  "scraping_date": "2025-08-20T22:26:46.109006",
   "contains_images": false,
   "questions": [
     {
@@ -17,10 +17,7 @@
         "Vert",
         "Rouge"
       ],
-      "scraped_at": "2025-08-20T21:43:19.960928",
-      "llm_answer": "Bleu",
-      "llm_justification": "La couleur du ciel par temps clair est généralement bleue selon les observations standards.",
-      "llm_language_detected": "French"
+      "scraped_at": "2025-08-20T22:27:05.544968"
     },
     {
       "question_number": 2,
@@ -31,10 +28,7 @@
       "images": [],
       "answer_type": "textInput",
       "answer_values": "Input text",
-      "scraped_at": "2025-08-20T21:43:21.309755",
-      "llm_answer": "Paris",
-      "llm_justification": "La capitale de la France est officiellement Paris. La réponse correspond à ce fait.",
-      "llm_language_detected": "French"
+      "scraped_at": "2025-08-20T22:27:06.572459"
     },
     {
       "question_number": 3,
@@ -49,10 +43,7 @@
         "7",
         "10"
       ],
-      "scraped_at": "2025-08-20T21:43:22.632656",
-      "llm_answer": "7",
-      "llm_justification": "Le nombre de jours dans une semaine est un concept standard, généralement 7.",
-      "llm_language_detected": "French"
+      "scraped_at": "2025-08-20T22:27:07.619700"
     },
     {
       "question_number": 4,
@@ -63,10 +54,7 @@
       "images": [],
       "answer_type": "textInput",
       "answer_values": "Input text",
-      "scraped_at": "2025-08-20T21:43:23.922899",
-      "llm_answer": "Emmanuel Macron",
-      "llm_justification": "Le président actuel, Emmanuel Macron, est élu pour un mandat qui couvre 2025.",
-      "llm_language_detected": "French"
+      "scraped_at": "2025-08-20T22:27:08.647801"
     },
     {
       "question_number": 5,
@@ -81,10 +69,7 @@
         "Chien",
         "Oiseau"
       ],
-      "scraped_at": "2025-08-20T21:43:25.335321",
-      "llm_answer": "Chien",
-      "llm_justification": "Le chien est un animal à fourrure avec des mamelles, donc il est classé comme mammifère dans la question.",
-      "llm_language_detected": "French"
+      "scraped_at": "2025-08-20T22:27:09.705777"
     },
     {
       "question_number": 6,
@@ -95,10 +80,7 @@
       "images": [],
       "answer_type": "textInput",
       "answer_values": "Input text",
-      "scraped_at": "2025-08-20T21:43:26.461534",
-      "llm_answer": "été",
-      "llm_justification": "Étant donné que le type est textInput et qu'il s'agit de fournir un mot désignant une saison, j'ai choisi la réponse 'été', qui correspond à l'une des saisons classiques.",
-      "llm_language_detected": "French"
+      "scraped_at": "2025-08-20T22:27:10.734870"
     }
   ],
   "statistics": {

@@ -1,7 +1,7 @@
 {
   "url": "https://forms.office.com/Pages/ResponsePage.aspx?id=DQSIkWdsW0yxEjajBLZtrQAAAAAAAAAAAANAAS6xmZ1UM09SSzNWSTdSMjFQUUMzWkFZU0U2VDZLSi4u",
   "form_name": "issam",
-  "scraping_date": "2025-08-20T21:42:46.522377",
+  "scraping_date": "2025-08-20T22:26:46.109006",
   "contains_images": false,
   "questions": [
     {
@@ -17,7 +17,10 @@
         "Vert",
         "Rouge"
       ],
-      "scraped_at": "2025-08-20T21:43:19.960928"
+      "scraped_at": "2025-08-20T22:27:05.544968",
+      "llm_answer": "Bleu",
+      "llm_justification": "Par temps clair, le ciel est généralement bleu en raison de la diffusion atmosphérique de la lumière, comme observé habituellement. Réponse basée sur les options fournies.",
+      "llm_language_detected": "French"
     },
     {
       "question_number": 2,
@@ -28,7 +31,10 @@
       "images": [],
       "answer_type": "textInput",
       "answer_values": "Input text",
-      "scraped_at": "2025-08-20T21:43:21.309755"
+      "scraped_at": "2025-08-20T22:27:06.572459",
+      "llm_answer": "Paris",
+      "llm_justification": "La question demande la capitale de la France. Paris est la réponse correcte et concise.",
+      "llm_language_detected": "French"
     },
     {
       "question_number": 3,
@@ -43,7 +49,10 @@
         "7",
         "10"
       ],
-      "scraped_at": "2025-08-20T21:43:22.632656"
+      "scraped_at": "2025-08-20T22:27:07.619700",
+      "llm_answer": "7",
+      "llm_justification": "La semaine compte habituellement 7 jours, ce qui correspond à l'option exacte.",
+      "llm_language_detected": "French"
     },
     {
       "question_number": 4,
@@ -54,7 +63,10 @@
       "images": [],
       "answer_type": "textInput",
       "answer_values": "Input text",
-      "scraped_at": "2025-08-20T21:43:23.922899"
+      "scraped_at": "2025-08-20T22:27:08.647801",
+      "llm_answer": "Nicolas Sarkozy",
+      "llm_justification": "Le Président actuel devrait se représenter ou être remplacé par le vainqueur des élections de 2025.",
+      "llm_language_detected": "French"
     },
     {
       "question_number": 5,
@@ -69,7 +81,10 @@
         "Chien",
         "Oiseau"
       ],
-      "scraped_at": "2025-08-20T21:43:25.335321"
+      "scraped_at": "2025-08-20T22:27:09.705777",
+      "llm_answer": "Chien",
+      "llm_justification": "Le chien est un mammifère. Il respire par les naseaux, donne naissance à des petits vivants et allait exclusivement sur terre.",
+      "llm_language_detected": "French"
     },
     {
       "question_number": 6,
@@ -80,7 +95,10 @@
       "images": [],
       "answer_type": "textInput",
       "answer_values": "Input text",
-      "scraped_at": "2025-08-20T21:43:26.461534"
+      "scraped_at": "2025-08-20T22:27:10.734870",
+      "llm_answer": "saison",
+      "llm_justification": "Le mot clé qui désigne une saison est 'saison', répondant directement à la demande.",
+      "llm_language_detected": "French"
     }
   ],
   "statistics": {
